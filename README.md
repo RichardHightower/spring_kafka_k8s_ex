@@ -22,14 +22,15 @@ Got it working from producer to consumer
 
 ## Todo
 
-* Use TLS
-* Create helm charts for install
-* Automate minikube set up (script it)
-* Use JSON payload instead of Path for spring controllers 
-* Install health checks for Kafka for Spring Boot
-* Install health checks for each uService 
-* Add Spring Boot ENV var overrides 
-* Install Prometheus support for health 
+* Use TLS (estimate 2hrs)
+* Create helm charts for installing uServices  (estimate 4 hours)
+* Create docker files for uServices  (estimate 1 hour)
+* Automate minikube set up (estimate script it) 
+* Use JSON payload instead of Path for spring controllers (estimate 1 hour) 
+* Install health checks for Kafka for Spring Boot 
+* Install health checks for each uService for Spring Boot (estimate 2hrs)
+* Add Spring Boot ENV var overrides  (estimate 1 hour)
+* Install Prometheus support for health (estimate 1 hour)
 
 
 ## ZBB todo 
