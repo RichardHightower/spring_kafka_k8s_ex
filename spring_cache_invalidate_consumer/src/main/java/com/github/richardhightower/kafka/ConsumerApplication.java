@@ -1,10 +1,12 @@
 package com.github.richardhightower.kafka;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.richardhightower.model.CacheInvalidateMessageDeserializer;
 import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -27,7 +29,6 @@ public class ConsumerApplication {
     private String bootstrapServers;
 
 
-
     @Bean
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
         return args -> {
@@ -46,6 +47,8 @@ public class ConsumerApplication {
     public KafkaAdmin admin() {
         Map<String, Object> configs = new HashMap<>();
         configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class.toString());
+        configs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, CacheInvalidateMessageDeserializer.class.toString());
         return new KafkaAdmin(configs);
     }
 

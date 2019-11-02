@@ -1,6 +1,8 @@
 package com.github.richardhightower.kafka;
 
 
+
+import com.github.richardhightower.model.CacheInvalidateMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,27 +27,26 @@ public class ConsumerController {
     private String cacheInvalidateUrl;
 
     @KafkaListener(id = "${consumer.group.cache.invalidate}", topics = "${topic.cache.invalidate}")
-    public void listen(String page) {
+    public void listen(CacheInvalidateMessage invalidateMessage) {
 
         counts.increment();
-        logger.info("Received: " + page);
+        logger.info("Received: " + invalidateMessage);
         final RestTemplate restTemplate = new RestTemplate();
 
-
         try {
-            final ResponseEntity<String> response
-                    = restTemplate.postForEntity(cacheInvalidateUrl + page, page, String.class);
-
+            ResponseEntity<Boolean> response = restTemplate.postForEntity(cacheInvalidateUrl, invalidateMessage, Boolean.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 okCount.increment();
-                logger.info(String.format("success sent message %s %s %d", page, response.getStatusCode(), response.getStatusCode().value()));
+                logger.info(String.format("success sent message %s %s %d", invalidateMessage, response.getStatusCode(),
+                        response.getStatusCode().value()));
             } else {
                 errorCount.increment();
-                logger.error(String.format("error sending message %s %s %d", page, response.getStatusCode(), response.getStatusCode().value()));
+                logger.error(String.format("error sending message %s %s %d", invalidateMessage, response.getStatusCode(),
+                        response.getStatusCode().value()));
             }
         } catch (RestClientException rce) {
             errorCount.increment();
-            logger.error(String.format("exception sending message %s", page), rce);
+            logger.error(String.format("exception sending message %s", invalidateMessage), rce);
         }
 
     }

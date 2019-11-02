@@ -16,6 +16,12 @@
 
 
     <dependencies>
+
+        <dependency>
+            <groupId>github.com.richardhightower</groupId>
+            <artifactId>cache_invalidate_model</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -37,12 +43,6 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
     </dependencies>
-
-    <properties>
-        <java.version>11</java.version>
-
-        <docker.image.prefix>cloudurable</docker.image.prefix>
-    </properties>
 
 
     <build>

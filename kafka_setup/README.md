@@ -15,34 +15,16 @@ kubectl port-forward --namespace default svc/kafka-cluster 9092:9092
 ```
 
 
-Post messages to producer 
-
-```
-curl -X POST http://localhost:8080/send/cache/foo
-
-```
-
 ----
-
-Got working from producer to consumer 
-
-```sh
-
-% curl -X POST http://localhost:8080/send/cache/foo //run 7 times
-
-% curl http://localhost:8081/consumer/counts       
-7
-
-```
 
 
 ### Running end to end 
 ```sh
 
-## Post page foo to be invalidated (will change to JSON body post, 
-## but right now just getting things working end to end)
-
-curl -X POST http://localhost:8080/send/cache/foo       
+curl -X POST \
+   -H "Content-Type: application/json" \
+   -d '{"timestamp":"1572654520446", "key":"foo"}' \
+   http://localhost:8080/send/cache      
 
 ## See if consumer got the post 
 curl http://localhost:8081/consumer/counts/success      
