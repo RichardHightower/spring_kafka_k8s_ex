@@ -44,4 +44,12 @@ public class CacheInvalidateMessage implements Serializable {
     public int hashCode() {
         return Objects.hash(timestamp, key);
     }
+
+    @Override
+    public String toString() {
+        return "CacheInvalidateMessage{" +
+                "timestamp=" + timestamp +
+                ", key='" + key + '\'' +
+                '}';
+    }
 }
