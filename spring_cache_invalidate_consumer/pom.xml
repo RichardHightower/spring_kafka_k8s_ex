@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
 
@@ -8,23 +8,17 @@
     <version>1.0</version>
 
 
-      <parent>
+    <parent>
         <groupId>github.com.richardhightower</groupId>
         <artifactId>spring_boot_kafka_k8s</artifactId>
         <version>1.0</version>
-      </parent>
+    </parent>
 
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-test</artifactId>
-          <scope>test</scope>
+            <groupId>github.com.richardhightower</groupId>
+            <artifactId>cache_invalidate_model</artifactId>
         </dependency>
 
         <dependency>
@@ -52,13 +46,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
     </dependencies>
-
-    <properties>
-        <java.version>11</java.version>
-
-        <docker.image.prefix>cloudurable</docker.image.prefix>
-    </properties>
-
 
     <build>
         <plugins>

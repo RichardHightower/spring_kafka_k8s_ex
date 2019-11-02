@@ -2,3 +2,4 @@
 /spring_cache_invalidate_consumer/target/
 /spring_cache_invalidate_producer/target/
 /spring_web_cache/target/
+/cache_invalidate_model/target/

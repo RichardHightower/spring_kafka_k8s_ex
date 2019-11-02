@@ -22,6 +22,7 @@ Got it working from producer to consumer
 
 ## Todo
 
+* Turn off stub and make sure you handle errors correctly from the consumer. 
 * Use TLS (estimate 2hrs)
 * Create helm charts for installing uServices  (estimate 4 hours)
 * Create docker files for uServices  (estimate 1 hour)
@@ -31,6 +32,7 @@ Got it working from producer to consumer
 * Install health checks for each uService for Spring Boot (estimate 2hrs)
 * Add Spring Boot ENV var overrides  (estimate 1 hour)
 * Install Prometheus support for health (estimate 1 hour)
+
 
 
 ## ZBB todo 
