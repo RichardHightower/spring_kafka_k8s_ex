@@ -3,6 +3,7 @@ package com.github.richardhightower.kafka;
 
 
 import com.github.richardhightower.model.CacheInvalidateMessage;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +18,7 @@ import java.util.concurrent.atomic.LongAdder;
 
 @RestController
 public class ConsumerController {
-    private final Logger logger = LoggerFactory.getLogger(ConsumerApplication.class);
+    private final Logger logger = LoggerFactory.getLogger(ConsumerController.class);
     private final LongAdder counts = new LongAdder();
 
     private final LongAdder okCount = new LongAdder();
@@ -27,7 +28,7 @@ public class ConsumerController {
     private String cacheInvalidateUrl;
 
     @KafkaListener(id = "${consumer.group.cache.invalidate}", topics = "${topic.cache.invalidate}")
-    public void listen(CacheInvalidateMessage invalidateMessage) {
+    public void listen(CacheInvalidateMessage invalidateMessage, KafkaConsumer kafkaConsumer) {
 
         counts.increment();
         logger.info("Received: " + invalidateMessage);
@@ -39,14 +40,20 @@ public class ConsumerController {
                 okCount.increment();
                 logger.info(String.format("success sent message %s %s %d", invalidateMessage, response.getStatusCode(),
                         response.getStatusCode().value()));
+
+                kafkaConsumer.commitSync();
             } else {
                 errorCount.increment();
-                logger.error(String.format("error sending message %s %s %d", invalidateMessage, response.getStatusCode(),
-                        response.getStatusCode().value()));
+                var errorMessage = String.format("error sending message %s %s %d", invalidateMessage, response.getStatusCode(),
+                        response.getStatusCode().value());
+                logger.error(errorMessage);
+                throw new ConsumerException(errorMessage);
             }
         } catch (RestClientException rce) {
             errorCount.increment();
-            logger.error(String.format("exception sending message %s", invalidateMessage), rce);
+            var errorMessage = String.format("exception sending message %s", invalidateMessage);
+            logger.error(errorMessage, rce);
+            throw new ConsumerException(errorMessage, rce);
         }
 
     }
