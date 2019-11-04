@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 import com.github.richardhightower.model.CacheInvalidateMessageDeserializer;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -23,11 +25,9 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
 import org.springframework.util.backoff.BackOffExecution;
 import org.springframework.util.backoff.ExponentialBackOff;
-import org.springframework.util.backoff.FixedBackOff;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
@@ -37,6 +37,14 @@ public class ConsumerApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ConsumerApplication.class, args);
+    }
+
+
+    private final Counter retriesCounter;
+
+
+    public ConsumerApplication(MeterRegistry registry) {
+        this.retriesCounter = registry.counter("consumer.retries");
     }
 
 
@@ -100,6 +108,7 @@ public class ConsumerApplication {
                     var time = backOffExecution.nextBackOff();
                     logger.warn(String.format("Backing off %d, %s ",time, consumerMessage));
                     Thread.currentThread().wait(time);
+                    retriesCounter.increment();
                 } catch (InterruptedException ex) {
                     logger.warn(String.format("Backing off failed %s", consumerMessage));
                 }
