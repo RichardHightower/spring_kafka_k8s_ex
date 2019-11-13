@@ -3,6 +3,8 @@ package com.github.richardhightower.kafka;
 
 
 import com.github.richardhightower.model.CacheInvalidateMessage;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +29,20 @@ public class ConsumerController {
     @Value("${cache.invalidate.url}")
     private String cacheInvalidateUrl;
 
+    private final Counter counter;
+    private final Counter errorCounter;
+
+
+    public ConsumerController(MeterRegistry registry) {
+        this.counter = registry.counter("consumer.received");
+        this.errorCounter = registry.counter("consumer.error");
+    }
+
+
     @KafkaListener(id = "${consumer.group.cache.invalidate}", topics = "${topic.cache.invalidate}")
     public void listen(CacheInvalidateMessage invalidateMessage, KafkaConsumer kafkaConsumer) {
 
-        counts.increment();
+        counts.increment(); counter.increment();
         logger.info("Received: " + invalidateMessage);
         final RestTemplate restTemplate = new RestTemplate();
 
@@ -43,7 +55,7 @@ public class ConsumerController {
 
                 kafkaConsumer.commitSync();
             } else {
-                errorCount.increment();
+                errorCount.increment(); errorCounter.increment();;
                 var errorMessage = String.format("error sending message %s %s %d", invalidateMessage, response.getStatusCode(),
                         response.getStatusCode().value());
                 logger.error(errorMessage);
